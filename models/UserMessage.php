@@ -74,6 +74,24 @@ class UserMessage extends ActiveRecord
     }
 
     /**
+     * 
+     * Delete user message and message after last user leaves the conversation
+     * 
+     * @return boolean - true when model deletion has succeeded, otherwise false
+     */
+    public function delete()
+    {
+        $messageId = $this->message_id;
+        if (!parent::delete()) {
+            return false;
+        }
+        if (NULL === self::findOne(['message_id' => $messageId])) {
+            Message::deleteAll(['id' => $messageId]);
+        }
+        return true;
+    }
+
+    /**
      * Returns the new message count for given User Id
      *
      * @param int $userId

@@ -3,7 +3,6 @@
 namespace humhub\modules\mail\models;
 
 use humhub\modules\mail\notifications\ConversationNotificationCategory;
-
 use humhub\modules\notification\targets\BaseTarget;
 use humhub\modules\notification\targets\MailTarget;
 use Yii;
@@ -135,12 +134,7 @@ class Message extends ActiveRecord
                     'message_id' => $this->id,
                     'user_id' => $userId
         ));
-
-        if (count($this->users) > 2) {
-            $userMessage->delete();
-        } else {
-            $this->delete();
-        }
+        $userMessage->delete();
     }
 
     /**
@@ -187,7 +181,7 @@ class Message extends ActiveRecord
         /* @var $mailTarget BaseTarget */
         $mailTarget = Yii::$app->notification->getTarget(MailTarget::class);
 
-        if(!$mailTarget || !$mailTarget->isCategoryEnabled(new ConversationNotificationCategory(), $user)) {
+        if (!$mailTarget || !$mailTarget->isCategoryEnabled(new ConversationNotificationCategory(), $user)) {
             return;
         }
 
@@ -202,7 +196,7 @@ class Message extends ActiveRecord
         $mail = Yii::$app->mailer->compose([
             'html' => '@mailmodule/views/emails/NewMessage',
             'text' => '@mailmodule/views/emails/plaintext/NewMessage'
-        ], [
+                ], [
             'message' => $this,
             'originator' => $this->originator,
             'andAddon' => $andAddon,
